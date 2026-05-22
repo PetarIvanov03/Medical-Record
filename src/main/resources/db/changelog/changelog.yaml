@@ -1,0 +1,236 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: jules
+      changes:
+        - createTable:
+            tableName: roles
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: role_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: users_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: users_roles
+            baseColumnNames: user_id
+            constraintName: fk_users_roles_user_id
+            referencedTableName: users
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: users_roles
+            baseColumnNames: role_id
+            constraintName: fk_users_roles_role_id
+            referencedTableName: roles
+            referencedColumnNames: id
+        - addUniqueConstraint:
+            tableName: users_roles
+            columnNames: user_id, role_id
+            constraintName: uc_users_roles
+
+        - createTable:
+            tableName: doctors
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uin
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: specialty
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_gp
+                  type: boolean
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: doctors
+            baseColumnNames: id
+            constraintName: fk_doctors_user_id
+            referencedTableName: users
+            referencedColumnNames: id
+
+        - createTable:
+            tableName: patients
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: egn
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: has_insurance
+                  type: boolean
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: gp_id
+                  type: bigint
+        - addForeignKeyConstraint:
+            baseTableName: patients
+            baseColumnNames: id
+            constraintName: fk_patients_user_id
+            referencedTableName: users
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: patients
+            baseColumnNames: gp_id
+            constraintName: fk_patients_gp_id
+            referencedTableName: doctors
+            referencedColumnNames: id
+
+        - createTable:
+            tableName: exams
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: doctor_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: patient_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: diagnosis
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: treatment
+                  type: varchar(255)
+              - column:
+                  name: price
+                  type: decimal(10, 2)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: exams
+            baseColumnNames: doctor_id
+            constraintName: fk_exams_doctor_id
+            referencedTableName: doctors
+            referencedColumnNames: id
+        - addForeignKeyConstraint:
+            baseTableName: exams
+            baseColumnNames: patient_id
+            constraintName: fk_exams_patient_id
+            referencedTableName: patients
+            referencedColumnNames: id
+
+        - createTable:
+            tableName: sick_leaves
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: start_date
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: num_days
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: exam_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: sick_leaves
+            baseColumnNames: exam_id
+            constraintName: fk_sick_leaves_exam_id
+            referencedTableName: exams
+            referencedColumnNames: id
