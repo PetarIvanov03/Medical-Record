@@ -56,3 +56,9 @@ All project changes are recorded here chronologically.
 - SpecialtyRequestDTO, SpecialtyResponseDTO, DiagnosisRequestDTO, DiagnosisResponseDTO
 - NomenclatureService + NomenclatureServiceImpl (full CRUD for specialties and diagnoses)
 - NomenclatureController — 8 endpoints (/api/specialties, /api/diagnoses, /api/admin/*)
+
+## [2026-06-06] — Phase 7 complete
+### Added
+- DoctorCreateDTO, DoctorUpdateDTO, DoctorResponseDTO
+- DoctorService + DoctorServiceImpl (creates linked User+Doctor, full CRUD)
+- DoctorController — 5 endpoints (/api/doctors, /api/admin/doctors/*)
