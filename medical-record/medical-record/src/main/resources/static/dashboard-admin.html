@@ -59,8 +59,8 @@
                 <input type="text" class="form-control" id="doctor-name" required>
               </div>
               <div class="mb-3">
-                <label for="doctor-egn" class="form-label">EGN</label>
-                <input type="text" class="form-control" id="doctor-egn" required>
+                <label for="doctor-uin" class="form-label">UIN</label>
+                <input type="text" class="form-control" id="doctor-uin" required>
               </div>
               <div class="mb-3">
                 <label for="doctor-specialty" class="form-label">Specialty</label>
@@ -260,9 +260,9 @@
             const tr = document.createElement("tr");
             tr.innerHTML = `
               <td>${d.id}</td>
-              <td>${d.username}</td>
+              <td>${d.specialtyName}</td>
               <td>${d.name}</td>
-              <td>${d.egn}</td>
+              <td>${d.uin}</td>
               <td>${d.specialty ? d.specialty.name : '-'}</td>
               <td><button class="btn btn-sm btn-danger" onclick="deleteDoctor(${d.id})">Delete</button></td>
             `;

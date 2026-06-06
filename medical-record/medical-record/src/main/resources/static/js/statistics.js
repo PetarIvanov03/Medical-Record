@@ -179,7 +179,7 @@ function loadPeakSickLeaveMonth(targetId) {
       if (data) {
         el.innerHTML = `
           <strong>Month ${data}</strong><br>
-          <span class="badge bg-danger fs-6">Sick Leaves: ${data.count}</span>
+          <span class="badge bg-danger fs-6">Sick Leaves: ${data}</span>
         `;
       } else {
         el.textContent = "No data available";

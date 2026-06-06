@@ -31,16 +31,16 @@ function loadMyHistory() {
     .then((data) => {
       const tbody = document.getElementById("history-tbody");
       tbody.innerHTML = "";
-      if (!data || data.length === 0) {
+      if (!data.examinations || data.examinations.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" class="text-center">No examinations found.</td></tr>';
         return;
       }
       data.examinations.forEach((item) => {
         const tr = document.createElement("tr");
         tr.innerHTML =
-          "<td>" + (item.date || "") + "</td>" +
-          "<td>" + (item.doctor || "") + "</td>" +
-          "<td>" + (item.diagnosis || "") + "</td>" +
+          "<td>" + (item.examDate || "") + "</td>" +
+          "<td>" + (item.doctorName || "") + "</td>" +
+          "<td>" + (item.diagnosisName || "") + "</td>" +
           "<td>" + (item.price != null ? item.price : "") + "</td>" +
           "<td>" + (item.paidByNzok ? "Yes" : "No") + "</td>";
         tbody.appendChild(tr);
