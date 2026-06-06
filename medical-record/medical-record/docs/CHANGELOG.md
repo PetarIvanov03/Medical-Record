@@ -68,3 +68,9 @@ All project changes are recorded here chronologically.
 - PatientCreateDTO, ChangeGpDTO, PatientResponseDTO, PatientHistoryDTO, ExaminationResponseDTO (placeholder)
 - PatientService + PatientServiceImpl (getMyProfile, changeGp validates isGp=true, history returns empty list for now)
 - PatientController — 8 endpoints
+
+## [2026-06-06] — Phase 9 complete
+### Added
+- ExaminationRequestDTO, ExaminationResponseDTO (full version replacing placeholder)
+- ExaminationService + ExaminationServiceImpl (NZOK auto-calc, specialty-diagnosis validation, doctor ownership check)
+- ExaminationController — 6 endpoints
