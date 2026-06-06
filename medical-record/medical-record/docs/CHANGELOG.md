@@ -50,3 +50,9 @@ All project changes are recorded here chronologically.
 - UserRegisterDTO, UserLoginDTO, JwtAuthResponseDTO
 - AuthService interface + AuthServiceImpl (register creates User+Patient, login returns JWT)
 - AuthController — POST /api/auth/register (201), POST /api/auth/login (200)
+
+## [2026-06-06] — Phase 6 complete
+### Added
+- SpecialtyRequestDTO, SpecialtyResponseDTO, DiagnosisRequestDTO, DiagnosisResponseDTO
+- NomenclatureService + NomenclatureServiceImpl (full CRUD for specialties and diagnoses)
+- NomenclatureController — 8 endpoints (/api/specialties, /api/diagnoses, /api/admin/*)
