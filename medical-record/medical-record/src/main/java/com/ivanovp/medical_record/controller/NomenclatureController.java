@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import java.util.List;
 
 @RestController
@@ -26,42 +27,50 @@ public class NomenclatureController {
     private final NomenclatureService nomenclatureService;
 
     @GetMapping("/api/specialties")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<List<SpecialtyResponseDTO>> getAllSpecialties() {
         return ResponseEntity.ok(nomenclatureService.getAllSpecialties());
     }
 
     @PostMapping("/api/admin/specialties")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SpecialtyResponseDTO> createSpecialty(@Valid @RequestBody SpecialtyRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(nomenclatureService.createSpecialty(dto));
     }
 
     @PutMapping("/api/admin/specialties/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SpecialtyResponseDTO> updateSpecialty(@PathVariable Long id, @Valid @RequestBody SpecialtyRequestDTO dto) {
         return ResponseEntity.ok(nomenclatureService.updateSpecialty(id, dto));
     }
 
     @DeleteMapping("/api/admin/specialties/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteSpecialty(@PathVariable Long id) {
         nomenclatureService.deleteSpecialty(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/api/diagnoses")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<List<DiagnosisResponseDTO>> getAllDiagnoses() {
         return ResponseEntity.ok(nomenclatureService.getAllDiagnoses());
     }
 
     @PostMapping("/api/admin/diagnoses")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DiagnosisResponseDTO> createDiagnosis(@Valid @RequestBody DiagnosisRequestDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(nomenclatureService.createDiagnosis(dto));
     }
 
     @PutMapping("/api/admin/diagnoses/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DiagnosisResponseDTO> updateDiagnosis(@PathVariable Long id, @Valid @RequestBody DiagnosisRequestDTO dto) {
         return ResponseEntity.ok(nomenclatureService.updateDiagnosis(id, dto));
     }
 
     @DeleteMapping("/api/admin/diagnoses/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteDiagnosis(@PathVariable Long id) {
         nomenclatureService.deleteDiagnosis(id);
         return ResponseEntity.noContent().build();

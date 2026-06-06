@@ -95,10 +95,10 @@ public class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
 
         return new PatientHistoryDTO(
-                patient.getId(),
-                patient.getName(),
-                patient.getEgn(),
-                .examinationRepository.findByPatientId(patient.getId())
+            patient.getId(),
+            patient.getName(),
+            patient.getEgn(),
+            examinationRepository.findByPatientId(patient.getId())
                 .stream()
                 .map(exam -> new ExaminationResponseDTO(
                     exam.getId(), exam.getExamDate(),

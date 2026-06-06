@@ -33,6 +33,10 @@
                 type="button" role="tab">Diagnoses</button>
       </li>
       <li class="nav-item" role="presentation">
+        <button class="nav-link" id="specialties-tab" data-bs-toggle="tab" data-bs-target="#tab-specialties"
+                type="button" role="tab">Specialties</button>
+      </li>
+      <li class="nav-item" role="presentation">
         <button class="nav-link" id="statistics-tab" data-bs-toggle="tab" data-bs-target="#tab-statistics"
                 type="button" role="tab">Statistics</button>
       </li>
@@ -79,10 +83,10 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Username</th>
+                <th>UIN</th>
                 <th>Name</th>
-                <th>EGN</th>
                 <th>Specialty</th>
+                <th>Is GP</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -146,7 +150,37 @@
         </div>
       </div>
 
-      <!-- ==================== Tab 4: Statistics ==================== -->
+      <!-- ==================== Tab 4: Specialties ==================== -->
+      <div class="tab-pane fade" id="tab-specialties" role="tabpanel">
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <h5>Create Specialty</h5>
+            <form id="createSpecialtyForm">
+              <div class="mb-3">
+                <label for="specialty-name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="specialty-name" required>
+              </div>
+              <button type="submit" class="btn btn-primary">Create</button>
+            </form>
+          </div>
+        </div>
+
+        <h5 class="mb-3">All Specialties</h5>
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="specialtiesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== Tab 5: Statistics ==================== -->
       <div class="tab-pane fade" id="tab-statistics" role="tabpanel">
         <h5 class="mb-3">General Statistics</h5>
 
@@ -260,10 +294,10 @@
             const tr = document.createElement("tr");
             tr.innerHTML = `
               <td>${d.id}</td>
-              <td>${d.specialtyName}</td>
-              <td>${d.name}</td>
               <td>${d.uin}</td>
-              <td>${d.specialty ? d.specialty.name : '-'}</td>
+              <td>${d.name}</td>
+              <td>${d.specialtyName || '-'}</td>
+              <td>${d.gp ? 'Yes' : 'No'}</td>
               <td><button class="btn btn-sm btn-danger" onclick="deleteDoctor(${d.id})">Delete</button></td>
             `;
             tbody.appendChild(tr);
@@ -373,11 +407,63 @@
         .catch((err) => alert(err.message));
     }
 
+    // ==================== Specialties Tab ====================
+    function loadSpecialtiesTable() {
+      fetch("/api/specialties", { headers: authHeader() })
+        .then((res) => { if (!res.ok) throw new Error("Failed to load specialties"); return res.json(); })
+        .then((data) => {
+          const tbody = document.getElementById("specialtiesTableBody");
+          tbody.innerHTML = "";
+          data.forEach((s) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${s.id}</td>
+              <td>${s.name}</td>
+              <td><button class="btn btn-sm btn-danger" onclick="deleteSpecialty(${s.id})">Delete</button></td>
+            `;
+            tbody.appendChild(tr);
+          });
+        })
+        .catch((err) => alert(err.message));
+    }
+
+    document.getElementById("createSpecialtyForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const data = { name: document.getElementById("specialty-name").value };
+      fetch("/api/admin/specialties", {
+        method: "POST",
+        headers: authHeader(),
+        body: JSON.stringify(data),
+      })
+        .then((res) => { if (!res.ok) throw new Error("Failed to create specialty"); return res.json(); })
+        .then(() => {
+          loadSpecialtiesTable();
+          loadSpecialties("doctor-specialty");
+          document.getElementById("createSpecialtyForm").reset();
+        })
+        .catch((err) => alert(err.message));
+    });
+
+    function deleteSpecialty(id) {
+      if (!confirm("Are you sure you want to delete this specialty?")) return;
+      fetch("/api/admin/specialties/" + id, {
+        method: "DELETE",
+        headers: authHeader(),
+      })
+        .then((res) => { if (!res.ok) throw new Error("Failed to delete specialty"); })
+        .then(() => {
+          loadSpecialtiesTable();
+          loadSpecialties("doctor-specialty");
+        })
+        .catch((err) => alert(err.message));
+    }
+
     // ==================== On Load ====================
     document.addEventListener("DOMContentLoaded", function () {
       loadDoctors();
       loadPatients();
       loadDiagnosesTable();
+      loadSpecialtiesTable();
       loadSpecialties("doctor-specialty");
       loadAllStatistics();
     });
