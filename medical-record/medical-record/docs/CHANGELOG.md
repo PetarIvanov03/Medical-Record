@@ -96,3 +96,13 @@ All project changes are recorded here chronologically.
 ### Added
 - UserResponseDTO, UserService, UserServiceImpl, AdminUserController
 - GET /api/admin/users, DELETE /api/admin/users/{id}
+
+## [2026-06-06] — Phase 14 complete
+### Added
+- auth.js, nomenclature.js, examination.js, doctor.js, patient.js, statistics.js
+- index.html, register.html, dashboard-patient.html, dashboard-doctor.html, dashboard-admin.html
+- Full Bootstrap 5 frontend connected to REST API via Fetch + JWT
+### Fixed
+- Corrected API paths for admin endpoints in dashboard-admin.html
+- Fixed DTO field name mappings in examination.js and patient.js
+- Fixed statistics.js peak month and revenue display

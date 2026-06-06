@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Doctor Dashboard</a>
+      <button class="btn btn-outline-light" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <ul class="nav nav-tabs mb-3" id="doctorTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="examinations-tab" data-bs-toggle="tab" data-bs-target="#examinations" type="button" role="tab">My Examinations</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="patients-tab" data-bs-toggle="tab" data-bs-target="#patients" type="button" role="tab">Patients</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="sickLeave-tab" data-bs-toggle="tab" data-bs-target="#sickLeave" type="button" role="tab">Sick Leave</button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="doctorTabsContent">
+      <!-- Tab 1: My Examinations -->
+      <div class="tab-pane fade show active" id="examinations" role="tabpanel">
+        <h5 class="mb-3">My Examinations</h5>
+        <table class="table table-striped table-bordered mb-4">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Patient</th>
+              <th>Diagnosis</th>
+              <th>Price</th>
+              <th>Paid By NZOK</th>
+            </tr>
+          </thead>
+          <tbody id="examinationsTableBody"></tbody>
+        </table>
+
+        <h5 class="mb-3">Create Examination</h5>
+        <form id="examinationForm">
+          <div class="mb-3">
+            <label for="patientId" class="form-label">Patient ID</label>
+            <input type="number" class="form-control" id="patientId" required>
+          </div>
+          <div class="mb-3">
+            <label for="diagnosisId" class="form-label">Diagnosis</label>
+            <select class="form-select" id="diagnosisId" required>
+              <option value="">-- Select Diagnosis --</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="treatment" class="form-label">Treatment</label>
+            <textarea class="form-control" id="treatment" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="number" class="form-control" id="price" step="0.01" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+
+      <!-- Tab 2: Patients -->
+      <div class="tab-pane fade" id="patients" role="tabpanel">
+        <h5 class="mb-3">All Patients</h5>
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>EGN</th>
+              <th>GP Name</th>
+            </tr>
+          </thead>
+          <tbody id="patientsTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Tab 3: Sick Leave -->
+      <div class="tab-pane fade" id="sickLeave" role="tabpanel">
+        <h5 class="mb-3">Create Sick Leave</h5>
+        <form id="sickLeaveForm">
+          <div class="mb-3">
+            <label for="examinationId" class="form-label">Examination ID</label>
+            <input type="number" class="form-control" id="examinationId" required>
+          </div>
+          <div class="mb-3">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="date" class="form-control" id="startDate" required>
+          </div>
+          <div class="mb-3">
+            <label for="durationDays" class="form-label">Duration (days)</label>
+            <input type="number" class="form-control" id="durationDays" min="1" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/nomenclature.js"></script>
+  <script src="js/examination.js"></script>
+  <script src="js/doctor.js"></script>
+  <script>
+    document.getElementById("examinationForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const data = {
+        patientId: parseInt(document.getElementById("patientId").value),
+        diagnosisId: parseInt(document.getElementById("diagnosisId").value),
+        treatment: document.getElementById("treatment").value,
+        price: parseFloat(document.getElementById("price").value),
+      };
+      createExamination(data);
+    });
+
+    document.getElementById("sickLeaveForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const data = {
+        examinationId: parseInt(document.getElementById("examinationId").value),
+        startDate: document.getElementById("startDate").value,
+        durationDays: parseInt(document.getElementById("durationDays").value),
+      };
+      createSickLeave(data);
+    });
+  </script>
+</body>
+</html>
