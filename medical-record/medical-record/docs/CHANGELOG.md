@@ -62,3 +62,9 @@ All project changes are recorded here chronologically.
 - DoctorCreateDTO, DoctorUpdateDTO, DoctorResponseDTO
 - DoctorService + DoctorServiceImpl (creates linked User+Doctor, full CRUD)
 - DoctorController — 5 endpoints (/api/doctors, /api/admin/doctors/*)
+
+## [2026-06-06] — Phase 8 complete
+### Added
+- PatientCreateDTO, ChangeGpDTO, PatientResponseDTO, PatientHistoryDTO, ExaminationResponseDTO (placeholder)
+- PatientService + PatientServiceImpl (getMyProfile, changeGp validates isGp=true, history returns empty list for now)
+- PatientController — 8 endpoints
