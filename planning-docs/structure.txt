@@ -1,0 +1,83 @@
+src/
+├── main/                           
+│   └──com.nbu.medicalrecord
+|   │    │
+|   │    ├── config/                 # Конфигурационни класове (Security, WebMvc, Swagger/OpenAPI)
+|   │    │
+|   │    ├── controller/             # REST Контролери (API слоят - приема заявките) 
+|   │    │   ├── AuthController.java
+|   │    │   ├── DoctorController.java
+|   │    │   ├── PatientController.java
+|   │    │   ├── ExaminationController.java
+|   │    │   ├── SickLeaveController.java
+|   │    │   ├── StatisticsController.java   # Заявки за справките от заданието 
+|   │    │   └── NomenclatureController.java # Нов контролер за специалности и диагнози
+|   │    │
+|   │    ├── dto/                    # Data Transfer Objects (Валидация и трансфер на данни) 
+|   │    │   ├── request/            # Данни от фронтенда към бекенда (напр. ExaminationRequestDTO)
+|   │    │   └── response/           # Данни от бекенда към фронтенда (напр. PatientHistoryDTO)
+|   │    │
+|   │    ├── entity/                 # JPA Ентитита (моделират таблиците в БД)
+|   │    │   ├── User.java
+|   │    │   ├── Doctor.java
+|   │    │   ├── Patient.java
+|   │    │   ├── Specialty.java
+|   │    │   ├── Diagnosis.java
+|   │    │   ├── Examination.java
+|   │    │   └── SickLeave.java
+|   │    │
+|   │    ├── repository/             # Spring Data JPA интерфейси (комуникация с БД)
+|   │    │   ├── UserRepository.java
+|   │    │   ├── DoctorRepository.java
+|   │    │   ├── PatientRepository.java
+|   │    │   └── ...
+|   │    │
+|   │    ├── service/                # Бизнес логика (интерфейси)
+|   │    │   ├── DoctorService.java
+|   │    │   ├── PatientService.java
+|   │    │   ├── ExaminationService.java
+|   │    │   ├── StatisticsService.java
+│   │    │   ├── NomenclatureService.java    # Нов сървис за номенклатури
+│   │    │   └── impl/               # Реализации на бизнес логиката
+│   │    │       ├── DoctorServiceImpl.java
+│   │    │       ├── NomenclatureServiceImpl.java # Нова имплементация за номенклатури
+│   │    │       └── ...
+|   │    │
+|   │    ├── security/               # Проверка на права, JWT, Roles (ADMIN, DOCTOR, PATIENT) [cite: 33]
+|   │    │   ├── JwtTokenProvider.java
+|   │    │   └── CustomUserDetailsService.java
+|   │    │
+|   │    └── exception/              # Глобално управление на грешки 
+|   │        ├── GlobalExceptionHandler.java  # @ControllerAdvice класа
+|   │        └── ResourceNotFoundException.java
+│   │
+│   └── resources/                  
+│        ├── static/                 # Коренна папка за статичния фронтенд
+│        │   ├── css/                # Стилизиране
+│        │   │   └── bootstrap.min.css # Сваленият Bootstrap дизайн за форми и таблици
+│        │   │
+│        │   ├── js/                 # JavaScript логика за комуникация с REST API-то
+│        │   │   ├── auth.js         # Скрипт за логин, регистрация и запис на JWT токен
+│        │   │   ├── doctor.js       # Скрипт за извикване на лекари и CRUD операции [cite: 27]
+│        │   │   ├── patient.js      # Скрипт за досиета и медицинска история [cite: 20]
+│        │   │   ├── examination.js  # Скрипт за въвеждане на прегледи и изчисляване на НЗОК
+│        │   │   ├── statistics.js   # Скрипт, който пълни графиките и справките за ADMIN
+│        │   │   └── nomenclature.js # Зарежда падащите менюта (диагнози и специалности)
+│        │   │
+│        │   ├── index.html          # Страницата за Вход (Login) в системата 
+│        │   ├── register.html       # Страницата за Регистрация на пациенти 
+│        │   ├── dashboard-admin.html# Табло на Администратора (вижда всички CRUD и статистики) [cite: 24, 35, 36, 37]
+│        │   ├── dashboard-doctor.html# Табло на Лекаря (въвеждане на прегледи, история на пациенти) [cite: 22, 23, 35]
+│        │   └── dashboard-patient.html# Табло на Пациента (вижда само своите прегледи и сменя GP) [cite: 18, 20, 34]
+│        │
+│        └── application.properties  # Настройки на БД (MySQL/PostgreSQL) и JWT сектретни ключове
+│
+│
+└── test/                           # Тук стоят всички твои тестове
+    └── java/com/nbu/medicalrecord/
+        ├── service/
+        │   └── ExaminationServiceTest.java   # Тества бизнес логиката (застраховки, болнични)
+        ├── repository/
+        │   └── ExaminationRepositoryTest.java # Тества сложните SQL/JPQL заявки за статистиките
+        └── controller/
+            └── DoctorControllerTest.java     # Тества REST ендпоинтите и правата за достъп
