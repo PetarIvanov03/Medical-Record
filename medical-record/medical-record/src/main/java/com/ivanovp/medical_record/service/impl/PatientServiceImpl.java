@@ -13,6 +13,7 @@ import com.ivanovp.medical_record.exception.ResourceNotFoundException;
 import com.ivanovp.medical_record.repository.DoctorRepository;
 import com.ivanovp.medical_record.repository.PatientRepository;
 import com.ivanovp.medical_record.repository.UserRepository;
+import com.ivanovp.medical_record.repository.ExaminationRepository;
 import com.ivanovp.medical_record.service.PatientService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,15 +31,18 @@ public class PatientServiceImpl implements PatientService {
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ExaminationRepository examinationRepository;
 
     public PatientServiceImpl(PatientRepository patientRepository,
                               DoctorRepository doctorRepository,
                               UserRepository userRepository,
-                              PasswordEncoder passwordEncoder) {
+                              PasswordEncoder passwordEncoder,
+                              ExaminationRepository examinationRepository) {
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.examinationRepository = examinationRepository;
     }
 
     @Override
@@ -94,7 +98,16 @@ public class PatientServiceImpl implements PatientService {
                 patient.getId(),
                 patient.getName(),
                 patient.getEgn(),
-                Collections.emptyList()
+                .examinationRepository.findByPatientId(patient.getId())
+                .stream()
+                .map(exam -> new ExaminationResponseDTO(
+                    exam.getId(), exam.getExamDate(),
+                    exam.getDoctor() != null ? exam.getDoctor().getName() : null,
+                    exam.getPatient() != null ? exam.getPatient().getName() : null,
+                    exam.getDiagnosis() != null ? exam.getDiagnosis().getCode() : null,
+                    exam.getDiagnosis() != null ? exam.getDiagnosis().getName() : null,
+                    exam.getTreatment(), exam.getPrice(), exam.isPaidByNzok()
+                )).toList()
         );
     }
 
@@ -107,10 +120,19 @@ public class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> new ResourceNotFoundException("Patient profile not found for user: " + username));
 
         return new PatientHistoryDTO(
-                patient.getId(),
-                patient.getName(),
-                patient.getEgn(),
-                Collections.emptyList()
+            patient.getId(),
+            patient.getName(),
+            patient.getEgn(),
+            examinationRepository.findByPatientId(patient.getId())
+                .stream()
+                .map(exam -> new ExaminationResponseDTO(
+                    exam.getId(), exam.getExamDate(),
+                    exam.getDoctor() != null ? exam.getDoctor().getName() : null,
+                    exam.getPatient() != null ? exam.getPatient().getName() : null,
+                    exam.getDiagnosis() != null ? exam.getDiagnosis().getCode() : null,
+                    exam.getDiagnosis() != null ? exam.getDiagnosis().getName() : null,
+                    exam.getTreatment(), exam.getPrice(), exam.isPaidByNzok()
+                )).toList()
         );
     }
 

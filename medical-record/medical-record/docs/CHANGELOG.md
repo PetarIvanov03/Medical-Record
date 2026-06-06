@@ -87,3 +87,7 @@ All project changes are recorded here chronologically.
 - StatisticsService + StatisticsServiceImpl (10 статистически метода)
 - StatisticsController — 10 endpoints at /api/statistics/*
 - JPQL queries added to ExaminationRepository, PatientRepository, SickLeaveRepository
+
+## [2026-06-06] — Phase 12 complete
+### Added
+- OpenApiConfig — Swagger UI with JWT Bearer security scheme
