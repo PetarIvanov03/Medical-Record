@@ -20,3 +20,15 @@ All project changes are recorded here chronologically.
 - PROMPT_CONTEXT.md corrected: Java 21 → Java 25, Spring Boot 3.x → Spring Boot 4.0.6.
 - SQL schema note: `boolean` columns should be `BIT` in MS SQL Server;
   Hibernate handles DDL correctly regardless.
+
+## [2026-06-06] — Phase 1 complete
+### Added
+- All 7 JPA entities created: UserRole (enum), User, Specialty, Diagnosis, Doctor, Patient, Examination, SickLeave.
+- M:N relation Specialty ↔ Diagnosis via specialty_diagnoses join table.
+- All foreign key relations mapped with correct fetch strategies.
+
+## [2026-06-06] — Phase 2 complete
+### Added
+- All 7 repositories created: UserRepository, SpecialtyRepository, DiagnosisRepository,
+  DoctorRepository, PatientRepository, ExaminationRepository, SickLeaveRepository.
+- Custom query methods for user lookup, GP filtering, and date-range examination search.
