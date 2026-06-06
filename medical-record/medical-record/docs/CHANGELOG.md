@@ -74,3 +74,16 @@ All project changes are recorded here chronologically.
 - ExaminationRequestDTO, ExaminationResponseDTO (full version replacing placeholder)
 - ExaminationService + ExaminationServiceImpl (NZOK auto-calc, specialty-diagnosis validation, doctor ownership check)
 - ExaminationController — 6 endpoints
+
+## [2026-06-06] — Phase 10 complete
+### Added
+- SickLeaveRequestDTO, SickLeaveResponseDTO
+- SickLeaveService + SickLeaveServiceImpl (1:1 duplicate check, doctor ownership)
+- SickLeaveController — 4 endpoints at /api/sick-leaves
+
+## [2026-06-06] — Phase 11 complete
+### Added
+- StatCountDTO, RevenueDTO
+- StatisticsService + StatisticsServiceImpl (10 статистически метода)
+- StatisticsController — 10 endpoints at /api/statistics/*
+- JPQL queries added to ExaminationRepository, PatientRepository, SickLeaveRepository
