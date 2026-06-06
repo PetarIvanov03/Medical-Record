@@ -32,3 +32,21 @@ All project changes are recorded here chronologically.
 - All 7 repositories created: UserRepository, SpecialtyRepository, DiagnosisRepository,
   DoctorRepository, PatientRepository, ExaminationRepository, SickLeaveRepository.
 - Custom query methods for user lookup, GP filtering, and date-range examination search.
+
+## [2026-06-06] — Phase 3 complete
+### Added
+- ResourceNotFoundException (@ResponseStatus 404)
+- GlobalExceptionHandler (@RestControllerAdvice) — handles 404, 400, 403, 500
+
+## [2026-06-06] — Phase 4 complete
+### Added
+- JwtTokenProvider (JJWT 0.12.x) — generate, validate, extract username
+- JwtAuthenticationFilter (OncePerRequestFilter) — Bearer token extraction
+- CustomUserDetailsService — loads user + maps role to GrantedAuthority
+- SecurityConfig — stateless JWT, permit /api/auth/**, BCrypt bean
+
+## [2026-06-06] — Phase 5 complete
+### Added
+- UserRegisterDTO, UserLoginDTO, JwtAuthResponseDTO
+- AuthService interface + AuthServiceImpl (register creates User+Patient, login returns JWT)
+- AuthController — POST /api/auth/register (201), POST /api/auth/login (200)
