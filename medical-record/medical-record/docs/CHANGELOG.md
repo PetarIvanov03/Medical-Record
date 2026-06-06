@@ -91,3 +91,8 @@ All project changes are recorded here chronologically.
 ## [2026-06-06] — Phase 12 complete
 ### Added
 - OpenApiConfig — Swagger UI with JWT Bearer security scheme
+
+## [2026-06-06] — Phase 13 complete
+### Added
+- UserResponseDTO, UserService, UserServiceImpl, AdminUserController
+- GET /api/admin/users, DELETE /api/admin/users/{id}
