@@ -11,6 +11,7 @@ import com.ivanovp.medical_record.repository.DoctorRepository;
 import com.ivanovp.medical_record.repository.ExaminationRepository;
 import com.ivanovp.medical_record.repository.PatientRepository;
 import com.ivanovp.medical_record.repository.UserRepository;
+import com.ivanovp.medical_record.service.impl.ExaminationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
