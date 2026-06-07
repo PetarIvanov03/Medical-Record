@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -36,16 +37,19 @@ public class DoctorController {
     }
 
     @PostMapping("/api/admin/doctors")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DoctorResponseDTO> createDoctor(@Valid @RequestBody DoctorCreateDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.createDoctor(dto));
     }
 
     @PutMapping("/api/admin/doctors/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DoctorResponseDTO> updateDoctor(@PathVariable Long id, @Valid @RequestBody DoctorUpdateDTO dto) {
         return ResponseEntity.ok(doctorService.updateDoctor(id, dto));
     }
 
     @DeleteMapping("/api/admin/doctors/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteDoctor(@PathVariable Long id) {
         doctorService.deleteDoctor(id);
         return ResponseEntity.noContent().build();
