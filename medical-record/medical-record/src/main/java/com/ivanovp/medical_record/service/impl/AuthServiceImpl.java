@@ -69,7 +69,8 @@ public class AuthServiceImpl implements com.ivanovp.medical_record.service.AuthS
         );
 
         // Load UserDetails and generate JWT token
-        User user = userRepository.findByUsername(dto.getUsername()).orElseThrow();
+        User user = userRepository.findByUsername(dto.getUsername())
+                .orElseThrow(() -> new org.springframework.security.authentication.BadCredentialsException("Invalid credentials"));
         UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword())

@@ -97,6 +97,42 @@ All project changes are recorded here chronologically.
 - UserResponseDTO, UserService, UserServiceImpl, AdminUserController
 - GET /api/admin/users, DELETE /api/admin/users/{id}
 
+## [2026-06-07] — Audit fixes (Phases 1–7)
+### Fixed
+**Phase 1 — Compilation errors**
+- `StatisticsServiceImpl.getMostCommonDiagnosis()`: added missing 4th `specialtyName` argument to `DiagnosisResponseDTO` constructor, derived from `diagnosis.getSpecialties()` (same pattern as `NomenclatureServiceImpl`).
+- `DoctorControllerTest`: replaced non-existent `dto.setIsGp(false)` with Lombok-generated `dto.setGp(false)`.
+
+**Phase 2 — Test infrastructure**
+- Created `src/test/resources/application.properties` with H2 in-memory datasource so `@SpringBootTest` context loads without MS SQL Server.
+- Removed MS SQL-specific `columnDefinition = "BIT DEFAULT 1/0"` from `Patient.isInsured` and `Doctor.isGp` entities; Java field initializers already guarantee the same defaults in a JPA-portable way.
+- Created `TestSecurityConfig` (`@TestConfiguration @EnableMethodSecurity`) with a stateless filter chain returning 401 for unauthenticated requests; imported it in `DoctorControllerTest` so `@PreAuthorize` is enforced under `@WithMockUser`.
+
+**Phase 3 — Missing role checks**
+- Added `@PreAuthorize` to all endpoints in `AdminUserController`, `PatientController`, `ExaminationController`, `SickLeaveController`, and `StatisticsController` per `api_endpoints_specification.txt`.
+- Added defense-in-depth `.requestMatchers("/api/admin/**").hasRole("ADMIN")` to `SecurityConfig`.
+
+**Phase 4 — LazyInitializationException prevention**
+- Added `@Transactional(readOnly = true)` at class level in `StatisticsServiceImpl`.
+- Added `@Transactional(readOnly = true)` to `NomenclatureServiceImpl.getAllDiagnoses()` and `getAllSpecialties()`.
+
+**Phase 5 — Exception handling**
+- `ExaminationServiceImpl.updateExamination` now throws `AccessDeniedException` (403) instead of `IllegalArgumentException` (500) for ownership violations.
+- `SickLeaveServiceImpl.createSickLeave` and `updateSickLeave` ownership branches now throw `AccessDeniedException`.
+- `ExaminationServiceTest.updateExamination_whenNotOwner_*` updated to expect `AccessDeniedException`; added missing `examinationRepository.findById` mock.
+- `GlobalExceptionHandler`: added `IllegalArgumentException` → 400, `AuthenticationException` → 401; fixed catch-all `Exception` handler to return generic "Internal server error" message and log the exception.
+- `AuthServiceImpl.login`: replaced bare `.orElseThrow()` with `BadCredentialsException("Invalid credentials")`.
+
+**Phase 6 — Business logic**
+- `SickLeaveService.deleteSickLeave` signature changed to `(Long id, String username, boolean isAdmin)`.
+- `SickLeaveServiceImpl.deleteSickLeave` enforces ownership: ADMIN may delete any; DOCTOR may only delete a sick leave whose examination they own (throws `AccessDeniedException` otherwise).
+- `SickLeaveController.deleteSickLeave` now extracts caller username and admin flag from `Authentication` and passes them to the service.
+
+**Phase 7 — Validation / DTO nits**
+- `SickLeaveRequestDTO.durationDays` changed from primitive `int` to `Integer` (keeping `@NotNull @Min(1)`).
+- Added `@JsonProperty("isInsured")` to `PatientResponseDTO.isInsured` and `PatientCreateDTO.isInsured` so the JSON key matches what the frontend JS reads (`data.isInsured`).
+- Added `@JsonProperty("isGp")` to `DoctorResponseDTO.isGp` and `DoctorCreateDTO.isGp` so the JSON key matches the documented field name used in request bodies.
+
 ## [2026-06-06] — Phase 14 complete
 ### Added
 - auth.js, nomenclature.js, examination.js, doctor.js, patient.js, statistics.js

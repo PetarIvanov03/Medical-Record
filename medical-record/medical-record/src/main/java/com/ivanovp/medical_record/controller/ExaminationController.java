@@ -6,6 +6,7 @@ import com.ivanovp.medical_record.service.ExaminationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 
@@ -26,22 +26,26 @@ public class ExaminationController {
     private final ExaminationService examinationService;
 
     @GetMapping("/api/examinations")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ExaminationResponseDTO>> getAllExaminations() {
         return ResponseEntity.ok(examinationService.getAllExaminations());
     }
 
     @GetMapping("/api/examinations/my-history")
+    @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<List<ExaminationResponseDTO>> getDoctorExaminations() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return ResponseEntity.ok(examinationService.getDoctorExaminations(username));
     }
 
     @GetMapping("/api/examinations/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR', 'PATIENT')")
     public ResponseEntity<ExaminationResponseDTO> getExaminationById(@PathVariable Long id) {
         return ResponseEntity.ok(examinationService.getExaminationById(id));
     }
 
     @PostMapping("/api/examinations")
+    @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<ExaminationResponseDTO> createExamination(
             @Valid @RequestBody ExaminationRequestDTO dto) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -50,6 +54,7 @@ public class ExaminationController {
     }
 
     @PutMapping("/api/examinations/{id}")
+    @PreAuthorize("hasRole('DOCTOR')")
     public ResponseEntity<ExaminationResponseDTO> updateExamination(
             @PathVariable Long id,
             @Valid @RequestBody ExaminationRequestDTO dto) {
@@ -58,6 +63,7 @@ public class ExaminationController {
     }
 
     @DeleteMapping("/api/admin/examinations/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteExamination(@PathVariable Long id) {
         examinationService.deleteExamination(id);
         return ResponseEntity.noContent().build();

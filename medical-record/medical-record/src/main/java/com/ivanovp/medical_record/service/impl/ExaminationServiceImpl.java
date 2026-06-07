@@ -15,6 +15,7 @@ import com.ivanovp.medical_record.repository.PatientRepository;
 import com.ivanovp.medical_record.repository.UserRepository;
 import com.ivanovp.medical_record.service.ExaminationService;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -122,7 +123,7 @@ public class ExaminationServiceImpl implements ExaminationService {
         // Verify ownership: only the doctor who created the examination can update it
         String examDoctorUsername = examination.getDoctor().getUser().getUsername();
         if (!examDoctorUsername.equals(username)) {
-            throw new IllegalArgumentException("You are not authorized to update this examination");
+            throw new AccessDeniedException("You are not authorized to update this examination");
         }
 
         // Update fields

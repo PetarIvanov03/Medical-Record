@@ -24,6 +24,7 @@ public class NomenclatureServiceImpl implements NomenclatureService {
     private final DiagnosisRepository diagnosisRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<SpecialtyResponseDTO> getAllSpecialties() {
         List<Specialty> specialties = specialtyRepository.findAll();
         return specialties.stream()
@@ -32,6 +33,7 @@ public class NomenclatureServiceImpl implements NomenclatureService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DiagnosisResponseDTO> getAllDiagnoses() {
         List<Diagnosis> diagnoses = diagnosisRepository.findAll();
         return diagnoses.stream()

@@ -11,10 +11,9 @@ import com.ivanovp.medical_record.repository.ExaminationRepository;
 import com.ivanovp.medical_record.repository.SickLeaveRepository;
 import com.ivanovp.medical_record.repository.UserRepository;
 import com.ivanovp.medical_record.service.SickLeaveService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -45,26 +44,22 @@ public class SickLeaveServiceImpl implements SickLeaveService {
 
     @Override
     public SickLeaveResponseDTO createSickLeave(SickLeaveRequestDTO dto, String username) {
-        // Check if a sick leave already exists for this examination
         if (sickLeaveRepository.existsByExaminationId(dto.getExaminationId())) {
             throw new IllegalArgumentException("Sick leave already exists for examination with id: " + dto.getExaminationId());
         }
 
-        // Find the examination
         Examination examination = examinationRepository.findById(dto.getExaminationId())
                 .orElseThrow(() -> new ResourceNotFoundException("Examination not found with id: " + dto.getExaminationId()));
 
-        // Verify that the doctor with the given username owns the examination
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
         com.ivanovp.medical_record.entity.Doctor doctor = doctorRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor profile not found for user: " + username));
 
         if (!examination.getDoctor().getId().equals(doctor.getId())) {
-            throw new IllegalArgumentException("You are not authorized to create a sick leave for this examination");
+            throw new AccessDeniedException("You are not authorized to create a sick leave for this examination");
         }
 
-        // Create and save the sick leave
         SickLeave sickLeave = new SickLeave();
         sickLeave.setStartDate(dto.getStartDate());
         sickLeave.setDurationDays(dto.getDurationDays());
@@ -80,17 +75,15 @@ public class SickLeaveServiceImpl implements SickLeaveService {
         SickLeave sickLeave = sickLeaveRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sick leave not found with id: " + id));
 
-        // Verify that the doctor with the given username owns the linked examination
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
         com.ivanovp.medical_record.entity.Doctor doctor = doctorRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor profile not found for user: " + username));
 
         if (!sickLeave.getExamination().getDoctor().getId().equals(doctor.getId())) {
-            throw new IllegalArgumentException("You are not authorized to update this sick leave");
+            throw new AccessDeniedException("You are not authorized to update this sick leave");
         }
 
-        // Update startDate and durationDays
         sickLeave.setStartDate(dto.getStartDate());
         sickLeave.setDurationDays(dto.getDurationDays());
 
@@ -100,9 +93,21 @@ public class SickLeaveServiceImpl implements SickLeaveService {
     }
 
     @Override
-    public void deleteSickLeave(Long id) {
+    public void deleteSickLeave(Long id, String username, boolean isAdmin) {
         SickLeave sickLeave = sickLeaveRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sick leave not found with id: " + id));
+
+        if (!isAdmin) {
+            User user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
+            com.ivanovp.medical_record.entity.Doctor doctor = doctorRepository.findByUserId(user.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Doctor profile not found for user: " + username));
+
+            if (!sickLeave.getExamination().getDoctor().getId().equals(doctor.getId())) {
+                throw new AccessDeniedException("You are not authorized to delete this sick leave");
+            }
+        }
+
         sickLeaveRepository.delete(sickLeave);
     }
 

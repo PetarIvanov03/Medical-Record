@@ -20,6 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import org.springframework.security.access.AccessDeniedException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -123,14 +125,10 @@ class ExaminationServiceTest {
     }
 
     @Test
-    void updateExamination_whenNotOwner_throwsIllegalArgumentException() {
+    void updateExamination_whenNotOwner_throwsAccessDeniedException() {
         // Arrange
         Long examinationId = 1L;
         String callerUsername = "differentDoctor";
-
-        User callerUser = new User();
-        callerUser.setId(2L);
-        callerUser.setUsername(callerUsername);
 
         User doctorUser = new User();
         doctorUser.setUsername("ownerDoctor");
@@ -145,9 +143,11 @@ class ExaminationServiceTest {
 
         ExaminationRequestDTO dto = new ExaminationRequestDTO(1L, null, "Updated treatment", new BigDecimal("150.00"));
 
+        when(examinationRepository.findById(examinationId)).thenReturn(Optional.of(examination));
+
         // Act & Assert
         assertThatThrownBy(() -> examinationService.updateExamination(examinationId, dto, callerUsername))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(AccessDeniedException.class)
                 .hasMessageContaining("You are not authorized to update this examination");
     }
 }

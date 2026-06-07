@@ -12,6 +12,7 @@ import com.ivanovp.medical_record.repository.SickLeaveRepository;
 import com.ivanovp.medical_record.service.StatisticsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class StatisticsServiceImpl implements StatisticsService {
 
     private final ExaminationRepository examinationRepository;
@@ -47,10 +49,14 @@ public class StatisticsServiceImpl implements StatisticsService {
         if (diagnosis == null) {
             return null;
         }
+        String specialtyName = diagnosis.getSpecialties().isEmpty()
+                ? null
+                : diagnosis.getSpecialties().get(0).getName();
         return new DiagnosisResponseDTO(
                 diagnosis.getId(),
                 diagnosis.getCode(),
-                diagnosis.getName()
+                diagnosis.getName(),
+                specialtyName
         );
     }
 

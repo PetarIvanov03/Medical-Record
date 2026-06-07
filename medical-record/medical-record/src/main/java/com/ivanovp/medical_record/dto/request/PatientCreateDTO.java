@@ -1,5 +1,6 @@
 package com.ivanovp.medical_record.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -27,6 +28,7 @@ public class PatientCreateDTO {
     @Pattern(regexp = "\\d{10}")
     private String egn;
 
+    @JsonProperty("isInsured")
     private boolean isInsured;
 
     private Long gpId;

@@ -23,7 +23,7 @@ public class Patient {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "is_insured", nullable = false, columnDefinition = "BIT DEFAULT 1")
+    @Column(name = "is_insured", nullable = false)
     private boolean isInsured = true;
 
     @ManyToOne(fetch = FetchType.LAZY)

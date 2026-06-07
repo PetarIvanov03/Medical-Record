@@ -21,5 +21,5 @@ public class SickLeaveRequestDTO {
 
     @NotNull(message = "Duration days is required")
     @Min(value = 1, message = "Duration days must be at least 1")
-    private int durationDays;
+    private Integer durationDays;
 }

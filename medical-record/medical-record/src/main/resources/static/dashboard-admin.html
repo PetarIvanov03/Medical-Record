@@ -321,6 +321,7 @@
         name: document.getElementById("doctor-name").value,
         uin: document.getElementById("doctor-uin").value,
         specialtyId: parseInt(document.getElementById("doctor-specialty").value),
+        isGp: false,
       };
       fetch("/api/admin/doctors", {
         method: "POST",
@@ -483,3 +484,4 @@
   </script>
 </body>
 </html>
+

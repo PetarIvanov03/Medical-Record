@@ -10,6 +10,6 @@ public interface SickLeaveService {
     SickLeaveResponseDTO createSickLeave(SickLeaveRequestDTO dto, String username);
 
     SickLeaveResponseDTO updateSickLeave(Long id, SickLeaveRequestDTO dto, String username);
-
-    void deleteSickLeave(Long id);
+    
+    void deleteSickLeave(Long id, String username, boolean isAdmin);
 }

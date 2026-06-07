@@ -22,7 +22,7 @@ public class Doctor {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "is_gp", nullable = false, columnDefinition = "BIT DEFAULT 0")
+    @Column(name = "is_gp", nullable = false)
     private boolean isGp;
 
     @ManyToOne(fetch = FetchType.LAZY)
