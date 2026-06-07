@@ -29,7 +29,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "role", nullable = false, columnDefinition = "varchar(255)")
+    @Column(name = "role", nullable = false, columnDefinition = "nvarchar(255)")
     @Enumerated(EnumType.STRING)
     private UserRole role;
 }
