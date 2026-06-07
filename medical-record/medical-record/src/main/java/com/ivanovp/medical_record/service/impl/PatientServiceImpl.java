@@ -12,6 +12,7 @@ import com.ivanovp.medical_record.entity.UserRole;
 import com.ivanovp.medical_record.exception.ResourceNotFoundException;
 import com.ivanovp.medical_record.repository.DoctorRepository;
 import com.ivanovp.medical_record.repository.PatientRepository;
+import com.ivanovp.medical_record.repository.SickLeaveRepository;
 import com.ivanovp.medical_record.repository.UserRepository;
 import com.ivanovp.medical_record.repository.ExaminationRepository;
 import com.ivanovp.medical_record.service.PatientService;
@@ -32,17 +33,20 @@ public class PatientServiceImpl implements PatientService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ExaminationRepository examinationRepository;
+    private final SickLeaveRepository sickLeaveRepository;
 
     public PatientServiceImpl(PatientRepository patientRepository,
                               DoctorRepository doctorRepository,
                               UserRepository userRepository,
                               PasswordEncoder passwordEncoder,
-                              ExaminationRepository examinationRepository) {
+                              ExaminationRepository examinationRepository,
+                              SickLeaveRepository sickLeaveRepository) {
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.examinationRepository = examinationRepository;
+        this.sickLeaveRepository = sickLeaveRepository;
     }
 
     @Override
@@ -171,16 +175,29 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
+    public PatientResponseDTO updateInsuranceStatus(Long patientId, boolean insured) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
+        patient.setInsured(insured);
+        patient = patientRepository.save(patient);
+        return mapToPatientResponseDTO(patient);
+    }
+
+    @Override
     public void deletePatient(Long id) {
         Patient patient = patientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + id));
 
-        // Delete linked user if exists
-        if (patient.getUser() != null) {
-            userRepository.delete(patient.getUser());
-        }
+        examinationRepository.findByPatientId(id).forEach(exam -> {
+            sickLeaveRepository.findByExaminationId(exam.getId()).ifPresent(sickLeaveRepository::delete);
+            examinationRepository.delete(exam);
+        });
 
+        User user = patient.getUser();
         patientRepository.delete(patient);
+        if (user != null) {
+            userRepository.delete(user);
+        }
     }
 
     private PatientResponseDTO mapToPatientResponseDTO(Patient patient) {
@@ -190,6 +207,7 @@ public class PatientServiceImpl implements PatientService {
         }
         return new PatientResponseDTO(
                 patient.getId(),
+                patient.getUser() != null ? patient.getUser().getUsername() : null,
                 patient.getName(),
                 patient.getEgn(),
                 patient.isInsured(),

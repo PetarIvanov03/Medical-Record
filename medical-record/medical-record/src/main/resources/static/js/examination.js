@@ -32,12 +32,13 @@ function createExamination(data) {
     body: JSON.stringify(data),
   })
     .then((res) => {
-      if (!res.ok) throw new Error("Failed to create examination");
+      if (!res.ok) return res.text().then((body) => { throw new Error("Failed to create examination: " + body); });
       return res.json();
     })
     .then(() => {
       alert("Examination created successfully");
       loadMyExaminations();
+      populateExaminationDropdown();
     })
     .catch((err) => alert(err.message));
 }
@@ -49,7 +50,7 @@ function createSickLeave(data) {
     body: JSON.stringify(data),
   })
     .then((res) => {
-      if (!res.ok) throw new Error("Failed to create sick leave");
+      if (!res.ok) return res.text().then((body) => { throw new Error("Failed to create sick leave: " + body); });
       return res.json();
     })
     .then(() => {

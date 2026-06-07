@@ -2,6 +2,7 @@ package com.ivanovp.medical_record.service.impl;
 
 import com.ivanovp.medical_record.dto.response.UserResponseDTO;
 import com.ivanovp.medical_record.entity.User;
+import com.ivanovp.medical_record.entity.UserRole;
 import com.ivanovp.medical_record.exception.ResourceNotFoundException;
 import com.ivanovp.medical_record.repository.UserRepository;
 import com.ivanovp.medical_record.service.UserService;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<UserResponseDTO> getAllUsers() {
         return userRepository.findAll().stream()
+                .filter(user -> user.getRole() != UserRole.ADMIN)
                 .map(this::mapToUserResponseDTO)
                 .collect(Collectors.toList());
     }

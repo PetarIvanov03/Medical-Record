@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class PatientResponseDTO {
 
     private Long id;
+    private String username;
     private String name;
     private String egn;
     @JsonProperty("isInsured")

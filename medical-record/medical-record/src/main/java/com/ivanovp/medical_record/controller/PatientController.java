@@ -69,9 +69,18 @@ public class PatientController {
     }
 
     @PostMapping("/api/admin/patients")
-    @PreAuthorize("hasRole('PATIENT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PatientResponseDTO> createPatient(@Valid @RequestBody PatientCreateDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(patientService.createPatient(dto));
+    }
+
+    @PutMapping("/api/admin/patients/{id}/insurance")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PatientResponseDTO> updateInsuranceStatus(
+            @PathVariable Long id,
+            @RequestBody java.util.Map<String, Boolean> body) {
+        boolean insured = Boolean.TRUE.equals(body.get("insured"));
+        return ResponseEntity.ok(patientService.updateInsuranceStatus(id, insured));
     }
 
     @DeleteMapping("/api/admin/patients/{id}")

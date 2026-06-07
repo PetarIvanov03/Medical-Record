@@ -2,6 +2,7 @@ package com.ivanovp.medical_record.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -43,6 +44,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<String> handleIllegalStateException(IllegalStateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        log.warn("Data integrity violation", ex);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Operation rejected: a database constraint was violated");
     }
 
     @ExceptionHandler(AuthenticationException.class)

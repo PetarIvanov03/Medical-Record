@@ -1,3 +1,10 @@
+function parseJsonSafe(res) {
+  return res.text().then((text) => {
+    if (!text || !text.trim()) return null;
+    return JSON.parse(text);
+  });
+}
+
 function loadMostCommonDiagnosis(targetId) {
   fetch("/api/statistics/most-common-diagnosis", {
     method: "GET",
@@ -5,7 +12,7 @@ function loadMostCommonDiagnosis(targetId) {
   })
     .then((res) => {
       if (!res.ok) throw new Error("Failed to load most common diagnosis");
-      return res.json();
+      return parseJsonSafe(res);
     })
     .then((data) => {
       const el = document.getElementById(targetId);
@@ -33,7 +40,7 @@ function loadGpPatientCounts(targetId) {
   })
     .then((res) => {
       if (!res.ok) throw new Error("Failed to load GP patient counts");
-      return res.json();
+      return parseJsonSafe(res);
     })
     .then((data) => {
       const el = document.getElementById(targetId);
@@ -71,7 +78,7 @@ function loadDoctorVisitCounts(targetId) {
   })
     .then((res) => {
       if (!res.ok) throw new Error("Failed to load doctor visit counts");
-      return res.json();
+      return parseJsonSafe(res);
     })
     .then((data) => {
       const el = document.getElementById(targetId);
@@ -109,7 +116,7 @@ function loadTotalRevenue(targetId) {
   })
     .then((res) => {
       if (!res.ok) throw new Error("Failed to load total revenue");
-      return res.json();
+      return parseJsonSafe(res);
     })
     .then((data) => {
       const el = document.getElementById(targetId);
@@ -133,7 +140,7 @@ function loadRevenueByDoctor(targetId) {
   })
     .then((res) => {
       if (!res.ok) throw new Error("Failed to load revenue by doctor");
-      return res.json();
+      return parseJsonSafe(res);
     })
     .then((data) => {
       const el = document.getElementById(targetId);
@@ -171,16 +178,16 @@ function loadPeakSickLeaveMonth(targetId) {
   })
     .then((res) => {
       if (!res.ok) throw new Error("Failed to load peak sick leave month");
-      return res.json();
+      return parseJsonSafe(res);
     })
     .then((data) => {
       const el = document.getElementById(targetId);
       if (!el) return;
-      if (data) {
-        el.innerHTML = `
-          <strong>Month ${data}</strong><br>
-          <span class="badge bg-danger fs-6">Sick Leaves: ${data}</span>
-        `;
+      if (data != null) {
+        const monthNames = ["January","February","March","April","May","June",
+                            "July","August","September","October","November","December"];
+        const monthName = monthNames[data - 1] || `Month ${data}`;
+        el.innerHTML = `<span class="badge bg-danger fs-6">${monthName}</span>`;
       } else {
         el.textContent = "No data available";
       }
@@ -198,7 +205,7 @@ function loadDoctorsWithMostSickLeaves(targetId) {
   })
     .then((res) => {
       if (!res.ok) throw new Error("Failed to load doctors with most sick leaves");
-      return res.json();
+      return parseJsonSafe(res);
     })
     .then((data) => {
       const el = document.getElementById(targetId);

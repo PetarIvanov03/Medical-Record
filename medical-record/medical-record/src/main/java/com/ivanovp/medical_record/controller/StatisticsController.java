@@ -1,7 +1,7 @@
 package com.ivanovp.medical_record.controller;
 
-import com.ivanovp.medical_record.dto.response.DiagnosisResponseDTO;
 import com.ivanovp.medical_record.dto.response.ExaminationResponseDTO;
+import com.ivanovp.medical_record.dto.response.MostCommonDiagnosisDTO;
 import com.ivanovp.medical_record.dto.response.PatientResponseDTO;
 import com.ivanovp.medical_record.dto.response.RevenueDTO;
 import com.ivanovp.medical_record.dto.response.StatCountDTO;
@@ -32,7 +32,7 @@ public class StatisticsController {
 
     @GetMapping("/api/statistics/most-common-diagnosis")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
-    public ResponseEntity<DiagnosisResponseDTO> getMostCommonDiagnosis() {
+    public ResponseEntity<MostCommonDiagnosisDTO> getMostCommonDiagnosis() {
         return ResponseEntity.status(HttpStatus.OK).body(statisticsService.getMostCommonDiagnosis());
     }
 

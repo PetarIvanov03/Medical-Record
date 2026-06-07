@@ -24,4 +24,6 @@ public interface PatientService {
     PatientResponseDTO createPatient(PatientCreateDTO dto);
 
     void deletePatient(Long id);
+
+    PatientResponseDTO updateInsuranceStatus(Long patientId, boolean insured);
 }

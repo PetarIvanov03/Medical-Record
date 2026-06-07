@@ -8,6 +8,7 @@ import com.ivanovp.medical_record.service.NomenclatureService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,6 +56,13 @@ public class NomenclatureController {
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public ResponseEntity<List<DiagnosisResponseDTO>> getAllDiagnoses() {
         return ResponseEntity.ok(nomenclatureService.getAllDiagnoses());
+    }
+
+    @GetMapping("/api/diagnoses/my-specialty")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public ResponseEntity<List<DiagnosisResponseDTO>> getMySpecialtyDiagnoses() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(nomenclatureService.getMySpecialtyDiagnoses(username));
     }
 
     @PostMapping("/api/admin/diagnoses")

@@ -1,7 +1,7 @@
 package com.ivanovp.medical_record.service.impl;
 
-import com.ivanovp.medical_record.dto.response.DiagnosisResponseDTO;
 import com.ivanovp.medical_record.dto.response.ExaminationResponseDTO;
+import com.ivanovp.medical_record.dto.response.MostCommonDiagnosisDTO;
 import com.ivanovp.medical_record.dto.response.PatientResponseDTO;
 import com.ivanovp.medical_record.dto.response.RevenueDTO;
 import com.ivanovp.medical_record.dto.response.StatCountDTO;
@@ -35,6 +35,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .stream()
                 .map(patient -> new PatientResponseDTO(
                         patient.getId(),
+                        patient.getUser() != null ? patient.getUser().getUsername() : null,
                         patient.getName(),
                         patient.getEgn(),
                         patient.isInsured(),
@@ -44,20 +45,15 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public DiagnosisResponseDTO getMostCommonDiagnosis() {
-        com.ivanovp.medical_record.entity.Diagnosis diagnosis = examinationRepository.findMostCommonDiagnosis();
-        if (diagnosis == null) {
+    public MostCommonDiagnosisDTO getMostCommonDiagnosis() {
+        List<Object[]> rows = examinationRepository.findMostCommonDiagnosisWithCount();
+        if (rows == null || rows.isEmpty()) {
             return null;
         }
-        String specialtyName = diagnosis.getSpecialties().isEmpty()
-                ? null
-                : diagnosis.getSpecialties().get(0).getName();
-        return new DiagnosisResponseDTO(
-                diagnosis.getId(),
-                diagnosis.getCode(),
-                diagnosis.getName(),
-                specialtyName
-        );
+        Object[] row = rows.get(0);
+        com.ivanovp.medical_record.entity.Diagnosis diagnosis = (com.ivanovp.medical_record.entity.Diagnosis) row[0];
+        Long count = ((Number) row[1]).longValue();
+        return new MostCommonDiagnosisDTO(diagnosis.getCode(), diagnosis.getName(), count);
     }
 
     @Override
@@ -66,6 +62,7 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .stream()
                 .map(patient -> new PatientResponseDTO(
                         patient.getId(),
+                        patient.getUser() != null ? patient.getUser().getUsername() : null,
                         patient.getName(),
                         patient.getEgn(),
                         patient.isInsured(),

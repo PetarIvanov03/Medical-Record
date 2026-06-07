@@ -64,14 +64,13 @@ function loadDoctorsDropdown() {
     .then((data) => {
       const select = document.getElementById("gp-select");
       select.innerHTML = '<option value="">-- Select a doctor --</option>';
-      if (data && data.length > 0) {
-        data.forEach((doctor) => {
-          const option = document.createElement("option");
-          option.value = doctor.id;
-          option.textContent = doctor.name || doctor.username || doctor.fullName || "Doctor";
-          select.appendChild(option);
-        });
-      }
+      const gps = (data || []).filter((doctor) => doctor.isGp);
+      gps.forEach((doctor) => {
+        const option = document.createElement("option");
+        option.value = doctor.id;
+        option.textContent = doctor.name || "Doctor";
+        select.appendChild(option);
+      });
     })
     .catch((err) => {
       console.error(err);
@@ -92,7 +91,6 @@ function changeGp() {
   })
     .then((res) => {
       if (!res.ok) throw new Error("Failed to change GP");
-      return res.json();
     })
     .then(() => {
       alert("General practitioner updated successfully.");

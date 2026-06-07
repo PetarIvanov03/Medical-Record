@@ -12,6 +12,7 @@ import com.ivanovp.medical_record.repository.DiagnosisRepository;
 import com.ivanovp.medical_record.repository.DoctorRepository;
 import com.ivanovp.medical_record.repository.ExaminationRepository;
 import com.ivanovp.medical_record.repository.PatientRepository;
+import com.ivanovp.medical_record.repository.SickLeaveRepository;
 import com.ivanovp.medical_record.repository.UserRepository;
 import com.ivanovp.medical_record.service.ExaminationService;
 import org.springframework.stereotype.Service;
@@ -31,17 +32,20 @@ public class ExaminationServiceImpl implements ExaminationService {
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
     private final DiagnosisRepository diagnosisRepository;
+    private final SickLeaveRepository sickLeaveRepository;
 
     public ExaminationServiceImpl(ExaminationRepository examinationRepository,
                                   PatientRepository patientRepository,
                                   DoctorRepository doctorRepository,
                                   UserRepository userRepository,
-                                  DiagnosisRepository diagnosisRepository) {
+                                  DiagnosisRepository diagnosisRepository,
+                                  SickLeaveRepository sickLeaveRepository) {
         this.examinationRepository = examinationRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.diagnosisRepository = diagnosisRepository;
+        this.sickLeaveRepository = sickLeaveRepository;
     }
 
     @Override
@@ -156,6 +160,7 @@ public class ExaminationServiceImpl implements ExaminationService {
     public void deleteExamination(Long id) {
         Examination examination = examinationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Examination not found with id: " + id));
+        sickLeaveRepository.findByExaminationId(id).ifPresent(sickLeaveRepository::delete);
         examinationRepository.delete(examination);
     }
 

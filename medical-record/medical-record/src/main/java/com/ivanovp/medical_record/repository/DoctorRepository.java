@@ -11,4 +11,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     List<Doctor> findByIsGpTrue();
 
     Optional<Doctor> findByUserId(Long userId);
+
+    boolean existsBySpecialtyId(Long specialtyId);
 }

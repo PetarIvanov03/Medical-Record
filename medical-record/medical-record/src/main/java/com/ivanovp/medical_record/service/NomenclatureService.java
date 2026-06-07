@@ -13,6 +13,8 @@ public interface NomenclatureService {
 
     List<DiagnosisResponseDTO> getAllDiagnoses();
 
+    List<DiagnosisResponseDTO> getMySpecialtyDiagnoses(String username);
+
     SpecialtyResponseDTO createSpecialty(SpecialtyRequestDTO dto);
 
     SpecialtyResponseDTO updateSpecialty(Long id, SpecialtyRequestDTO dto);

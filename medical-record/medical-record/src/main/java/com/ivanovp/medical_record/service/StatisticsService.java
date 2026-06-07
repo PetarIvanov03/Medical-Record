@@ -1,7 +1,7 @@
 package com.ivanovp.medical_record.service;
 
-import com.ivanovp.medical_record.dto.response.DiagnosisResponseDTO;
 import com.ivanovp.medical_record.dto.response.ExaminationResponseDTO;
+import com.ivanovp.medical_record.dto.response.MostCommonDiagnosisDTO;
 import com.ivanovp.medical_record.dto.response.PatientResponseDTO;
 import com.ivanovp.medical_record.dto.response.RevenueDTO;
 import com.ivanovp.medical_record.dto.response.StatCountDTO;
@@ -14,7 +14,7 @@ public interface StatisticsService {
 
     List<PatientResponseDTO> getPatientsByDiagnosis(Long diagnosisId);
 
-    DiagnosisResponseDTO getMostCommonDiagnosis();
+    MostCommonDiagnosisDTO getMostCommonDiagnosis();
 
     List<PatientResponseDTO> getPatientsByGp(Long gpId);
 

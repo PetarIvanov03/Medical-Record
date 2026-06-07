@@ -9,6 +9,8 @@ import com.ivanovp.medical_record.entity.User;
 import com.ivanovp.medical_record.entity.UserRole;
 import com.ivanovp.medical_record.exception.ResourceNotFoundException;
 import com.ivanovp.medical_record.repository.DoctorRepository;
+import com.ivanovp.medical_record.repository.ExaminationRepository;
+import com.ivanovp.medical_record.repository.PatientRepository;
 import com.ivanovp.medical_record.repository.SpecialtyRepository;
 import com.ivanovp.medical_record.repository.UserRepository;
 import com.ivanovp.medical_record.service.DoctorService;
@@ -27,15 +29,21 @@ public class DoctorServiceImpl implements DoctorService {
     private final SpecialtyRepository specialtyRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ExaminationRepository examinationRepository;
+    private final PatientRepository patientRepository;
 
     public DoctorServiceImpl(DoctorRepository doctorRepository,
                              SpecialtyRepository specialtyRepository,
                              UserRepository userRepository,
-                             PasswordEncoder passwordEncoder) {
+                             PasswordEncoder passwordEncoder,
+                             ExaminationRepository examinationRepository,
+                             PatientRepository patientRepository) {
         this.doctorRepository = doctorRepository;
         this.specialtyRepository = specialtyRepository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.examinationRepository = examinationRepository;
+        this.patientRepository = patientRepository;
     }
 
     @Override
@@ -110,12 +118,20 @@ public class DoctorServiceImpl implements DoctorService {
         Doctor doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id: " + id));
 
-        // Delete linked user if exists
-        if (doctor.getUser() != null) {
-            userRepository.delete(doctor.getUser());
+        if (!examinationRepository.findByDoctorId(id).isEmpty()) {
+            throw new IllegalStateException("Cannot delete doctor with existing examinations");
         }
 
+        patientRepository.findByGpId(id).forEach(patient -> {
+            patient.setGp(null);
+            patientRepository.save(patient);
+        });
+
+        User user = doctor.getUser();
         doctorRepository.delete(doctor);
+        if (user != null) {
+            userRepository.delete(user);
+        }
     }
 
     private DoctorResponseDTO mapToDoctorResponseDTO(Doctor doctor) {

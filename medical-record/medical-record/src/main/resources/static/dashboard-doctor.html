@@ -47,8 +47,10 @@
         <h5 class="mb-3">Create Examination</h5>
         <form id="examinationForm">
           <div class="mb-3">
-            <label for="patientId" class="form-label">Patient ID</label>
-            <input type="number" class="form-control" id="patientId" required>
+            <label for="patientId" class="form-label">Patient</label>
+            <select class="form-select" id="patientId" required>
+              <option value="">-- Select Patient --</option>
+            </select>
           </div>
           <div class="mb-3">
             <label for="diagnosisId" class="form-label">Diagnosis</label>
@@ -88,8 +90,10 @@
         <h5 class="mb-3">Create Sick Leave</h5>
         <form id="sickLeaveForm">
           <div class="mb-3">
-            <label for="examinationId" class="form-label">Examination ID</label>
-            <input type="number" class="form-control" id="examinationId" required>
+            <label for="examinationId" class="form-label">Examination</label>
+            <select class="form-select" id="examinationId" required>
+              <option value="">-- Select Examination --</option>
+            </select>
           </div>
           <div class="mb-3">
             <label for="startDate" class="form-label">Start Date</label>
