@@ -129,6 +129,12 @@
                 <label for="diagnosis-name" class="form-label">Name</label>
                 <input type="text" class="form-control" id="diagnosis-name" required>
               </div>
+              <div class="mb-3">
+                <label for="diagnosis-specialty" class="form-label">Specialty</label>
+                <select class="form-select" id="diagnosis-specialty">
+                  <option value="">-- None --</option>
+                </select>
+              </div>
               <button type="submit" class="btn btn-primary">Create</button>
             </form>
           </div>
@@ -142,6 +148,7 @@
                 <th>ID</th>
                 <th>Code</th>
                 <th>Name</th>
+                <th>Specialty</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -372,6 +379,7 @@
               <td>${d.id}</td>
               <td>${d.code}</td>
               <td>${d.name}</td>
+              <td>${d.specialtyName || '-'}</td>
               <td><button class="btn btn-sm btn-danger" onclick="deleteDiagnosis(${d.id})">Delete</button></td>
             `;
             tbody.appendChild(tr);
@@ -382,9 +390,11 @@
 
     document.getElementById("createDiagnosisForm").addEventListener("submit", function (e) {
       e.preventDefault();
+      const specialtyVal = document.getElementById("diagnosis-specialty").value;
       const data = {
         code: document.getElementById("diagnosis-code").value,
         name: document.getElementById("diagnosis-name").value,
+        specialtyId: specialtyVal ? parseInt(specialtyVal) : null,
       };
       fetch("/api/admin/diagnoses", {
         method: "POST",
@@ -439,6 +449,7 @@
         .then(() => {
           loadSpecialtiesTable();
           loadSpecialties("doctor-specialty");
+          loadSpecialties("diagnosis-specialty", true);
           document.getElementById("createSpecialtyForm").reset();
         })
         .catch((err) => alert(err.message));
@@ -454,6 +465,7 @@
         .then(() => {
           loadSpecialtiesTable();
           loadSpecialties("doctor-specialty");
+          loadSpecialties("diagnosis-specialty", true);
         })
         .catch((err) => alert(err.message));
     }
@@ -465,6 +477,7 @@
       loadDiagnosesTable();
       loadSpecialtiesTable();
       loadSpecialties("doctor-specialty");
+      loadSpecialties("diagnosis-specialty", true);
       loadAllStatistics();
     });
   </script>

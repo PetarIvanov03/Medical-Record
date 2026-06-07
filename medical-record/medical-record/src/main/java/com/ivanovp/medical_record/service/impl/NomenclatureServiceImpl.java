@@ -73,6 +73,14 @@ public class NomenclatureServiceImpl implements NomenclatureService {
         diagnosis.setCode(dto.getCode());
         diagnosis.setName(dto.getName());
         Diagnosis saved = diagnosisRepository.save(diagnosis);
+
+        if (dto.getSpecialtyId() != null) {
+            Specialty specialty = specialtyRepository.findById(dto.getSpecialtyId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Specialty not found with id: " + dto.getSpecialtyId()));
+            specialty.getDiagnoses().add(saved);
+            specialtyRepository.save(specialty);
+        }
+
         return toDiagnosisResponseDTO(saved);
     }
 
@@ -83,6 +91,16 @@ public class NomenclatureServiceImpl implements NomenclatureService {
                 .orElseThrow(() -> new ResourceNotFoundException("Diagnosis not found with id: " + id));
         diagnosis.setCode(dto.getCode());
         diagnosis.setName(dto.getName());
+
+        if (dto.getSpecialtyId() != null) {
+            Specialty specialty = specialtyRepository.findById(dto.getSpecialtyId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Specialty not found with id: " + dto.getSpecialtyId()));
+            if (!specialty.getDiagnoses().contains(diagnosis)) {
+                specialty.getDiagnoses().add(diagnosis);
+                specialtyRepository.save(specialty);
+            }
+        }
+
         Diagnosis updated = diagnosisRepository.save(diagnosis);
         return toDiagnosisResponseDTO(updated);
     }
@@ -103,10 +121,14 @@ public class NomenclatureServiceImpl implements NomenclatureService {
     }
 
     private DiagnosisResponseDTO toDiagnosisResponseDTO(Diagnosis diagnosis) {
+        String specialtyName = diagnosis.getSpecialties().isEmpty()
+                ? null
+                : diagnosis.getSpecialties().get(0).getName();
         return new DiagnosisResponseDTO(
                 diagnosis.getId(),
                 diagnosis.getCode(),
-                diagnosis.getName()
+                diagnosis.getName(),
+                specialtyName
         );
     }
 }

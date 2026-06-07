@@ -1,4 +1,4 @@
-function loadSpecialties(selectId) {
+function loadSpecialties(selectId, includeBlank) {
   const select = document.getElementById(selectId);
   if (!select) return;
 
@@ -12,6 +12,12 @@ function loadSpecialties(selectId) {
     })
     .then((data) => {
       select.innerHTML = "";
+      if (includeBlank) {
+        const blank = document.createElement("option");
+        blank.value = "";
+        blank.textContent = "-- None --";
+        select.appendChild(blank);
+      }
       data.forEach((item) => {
         const option = document.createElement("option");
         option.value = item.id;
